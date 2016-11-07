@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.2.xsd 
+    http://www.springframework.org/schema/mvc 
+    http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.2.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+    http://www.springframework.org/schema/util
+    http://www.springframework.org/schema/util/spring-util-4.2.xsd 
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+    http://code.alibabatech.com/schema/dubbo          
+    http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+  	<context:annotation-config />
+	 <!-- spring session -->
+	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="30"/>
+        <property name="maxIdle" value="10"/>
+        <property name="minIdle" value="1"/>
+        <property name="maxWaitMillis" value="30000"/>
+        <property name="testOnBorrow" value="true"/>
+        <property name="testOnReturn" value="false"/>
+        <property name="testWhileIdle" value="false"/>
+    </bean>
+	
+	
+	<bean id="connectionFactory"
+          class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" destroy-method="destroy">
+        <property name="hostName" value="192.168.1.21"/>
+        <property name="port" value="6379"/>
+        <property name="password" value="123456" />
+        <property name="timeout" value="3000"/>
+        <property name="usePool" value="true"/>
+        <property name="poolConfig" ref="poolConfig"/>
+    </bean>
+	  
+	<bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">  
+        <property name="connectionFactory"   ref="connectionFactory" />  
+    </bean>
+  	<!-- 使用sessionRepository存储 -->
+  	<bean id="cookieSerializer" class="org.springframework.session.web.http.DefaultCookieSerializer">
+  		<property name="cookieName" value="dragon"/>
+  	</bean>
+  	
+  	<bean class="org.springframework.session.web.http.CookieHttpSessionStrategy">
+  	 	<property name="cookieSerializer" ref="cookieSerializer"/>
+  	</bean> 
+  	
+  	
+  	<bean id="sessionRepository" class="org.springframework.session.data.redis.RedisOperationsSessionRepository">
+  	  <constructor-arg name="redisConnectionFactory" ref="connectionFactory"/>  
+  	</bean>
+  	
+  	<bean id="sessionRepository" class="org.springframework.session.MapSessionRepository"/> 
+  	
+  	
+  	<!-- 使用spring redis 管理session -->
+  	<bean class="org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration">
+  		<property name="maxInactiveIntervalInSeconds" value="7200" />
+  	</bean>
+  	
+</beans>

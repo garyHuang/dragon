@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>gary-core</groupId>
+		<artifactId>gary-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>dragon-dubbo</artifactId>
+	<packaging>war</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>gary-core</groupId>
+			<artifactId>dragon-comm</artifactId>
+			<version>${dragon-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>gary-core</groupId>
+			<artifactId>dragon-service</artifactId>
+			<version>${dragon-version}</version>
+		</dependency>
+	</dependencies>
+</project>
